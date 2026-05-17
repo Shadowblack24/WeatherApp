@@ -7,4 +7,6 @@ interface FavoriteRepository {
     suspend fun addCity(cityName: String)
 
     suspend fun getCities(): List<FavoriteCityEntity>
+
+    suspend fun deleteCity(city: FavoriteCityEntity)
 }

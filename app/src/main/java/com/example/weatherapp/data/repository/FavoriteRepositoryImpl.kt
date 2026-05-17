@@ -22,4 +22,9 @@ class FavoriteRepositoryImpl @Inject constructor(
 
         return dao.getAllCities()
     }
+
+    override suspend fun deleteCity(city: FavoriteCityEntity) {
+
+        dao.deleteCity(city)
+    }
 }
