@@ -15,6 +15,9 @@ interface FavoriteCityDao {
     @Query("SELECT * FROM favorite_cities")
     suspend fun getAllCities(): List<FavoriteCityEntity>
 
+    @Query("SELECT COUNT(*) FROM favorite_cities WHERE cityName = :cityName")
+    suspend fun getCityCount(cityName: String): Int
+
     @Delete
     suspend fun deleteCity(city: FavoriteCityEntity)
 }

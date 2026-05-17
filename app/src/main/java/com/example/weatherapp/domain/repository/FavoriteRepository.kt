@@ -4,7 +4,7 @@ import com.example.weatherapp.data.local.FavoriteCityEntity
 
 interface FavoriteRepository {
 
-    suspend fun addCity(cityName: String)
+    suspend fun addCity(cityName: String): Boolean
 
     suspend fun getCities(): List<FavoriteCityEntity>
 

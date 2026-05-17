@@ -14,10 +14,15 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDrawerState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.weatherapp.presentation.components.DrawerContent
 import com.example.weatherapp.presentation.navigation.Screen
@@ -38,12 +43,23 @@ class MainActivity : ComponentActivity() {
         setContent {
             WeatherAppTheme {
 
+                var selectedCityName by remember {
+                    mutableStateOf<String?>(null)
+                }
+
+                var isSelectedCityFavorite by remember {
+                    mutableStateOf(false)
+                }
+
                 val drawerState = rememberDrawerState(
                     initialValue = DrawerValue.Closed
                 )
 
                 val scope = rememberCoroutineScope()
                 val navController = rememberNavController()
+
+                val backStackEntry by navController.currentBackStackEntryAsState()
+                val currentRoute = backStackEntry?.destination?.route
 
                 ModalNavigationDrawer(
                     drawerState = drawerState,
@@ -64,7 +80,7 @@ class MainActivity : ComponentActivity() {
                         topBar = {
                             TopAppBar(
                                 title = {
-                                    Text("Weather App")
+                                    Text("Погода+")
                                 },
                                 navigationIcon = {
                                     TextButton(
@@ -75,6 +91,24 @@ class MainActivity : ComponentActivity() {
                                         }
                                     ) {
                                         Text("Меню")
+                                    }
+                                },
+                                actions = {
+                                    if (currentRoute != Screen.Home.route) {
+                                        TextButton(
+                                            onClick = {
+                                                val isBackSuccessful =
+                                                    navController.popBackStack()
+
+                                                if (!isBackSuccessful) {
+                                                    navController.navigate(Screen.Home.route) {
+                                                        launchSingleTop = true
+                                                    }
+                                                }
+                                            }
+                                        ) {
+                                            Text("Назад")
+                                        }
                                     }
                                 }
                             )
@@ -91,15 +125,39 @@ class MainActivity : ComponentActivity() {
                                 startDestination = Screen.Home.route
                             ) {
                                 composable(Screen.Home.route) {
-                                    HomeScreen()
+                                    HomeScreen(
+                                        selectedCityName = selectedCityName,
+                                        isSelectedCityFavorite = isSelectedCityFavorite,
+                                        onOpenSearchClick = {
+                                            navController.navigate(Screen.Search.route)
+                                        }
+                                    )
                                 }
 
                                 composable(Screen.Search.route) {
-                                    SearchScreen()
+                                    SearchScreen(
+                                        onCitySelected = { cityName ->
+                                            selectedCityName = cityName
+                                            isSelectedCityFavorite = false
+
+                                            navController.navigate(Screen.Home.route) {
+                                                launchSingleTop = true
+                                            }
+                                        }
+                                    )
                                 }
 
                                 composable(Screen.Favorites.route) {
-                                    FavoritesScreen()
+                                    FavoritesScreen(
+                                        onCitySelected = { cityName ->
+                                            selectedCityName = cityName
+                                            isSelectedCityFavorite = true
+
+                                            navController.navigate(Screen.Home.route) {
+                                                launchSingleTop = true
+                                            }
+                                        }
+                                    )
                                 }
                             }
                         }

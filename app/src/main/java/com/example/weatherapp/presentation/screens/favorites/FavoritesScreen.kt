@@ -3,8 +3,10 @@ package com.example.weatherapp.presentation.screens.favorites
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -21,9 +23,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
 fun FavoritesScreen(
+    onCitySelected: (String) -> Unit,
     viewModel: FavoritesViewModel = hiltViewModel()
 ) {
-
     val uiState = viewModel.uiState.observeAsState(
         FavoritesUiState()
     ).value
@@ -40,19 +42,14 @@ fun FavoritesScreen(
         )
 
         if (uiState.cities.isEmpty()) {
-
             Text(
                 text = "Пока нет избранных городов",
                 modifier = Modifier.padding(top = 24.dp)
             )
-        }
-
-        else {
-
+        } else {
             LazyColumn(
                 modifier = Modifier.padding(top = 24.dp)
             ) {
-
                 items(uiState.cities) { city ->
 
                     Card(
@@ -60,29 +57,36 @@ fun FavoritesScreen(
                             .fillMaxWidth()
                             .padding(bottom = 12.dp)
                     ) {
-
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-
-                            horizontalArrangement = Arrangement.SpaceBetween,
-
-                            verticalAlignment = Alignment.CenterVertically
+                        Column(
+                            modifier = Modifier.padding(16.dp)
                         ) {
-
                             Text(
                                 text = city.cityName,
                                 style = MaterialTheme.typography.headlineSmall
                             )
 
-                            Button(
-                                onClick = {
-                                    viewModel.deleteCity(city)
-                                }
-                            ) {
+                            Spacer(modifier = Modifier.height(12.dp))
 
-                                Text("Удалить")
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Button(
+                                    onClick = {
+                                        onCitySelected(city.cityName)
+                                    }
+                                ) {
+                                    Text("Показать")
+                                }
+
+                                Button(
+                                    onClick = {
+                                        viewModel.deleteCity(city)
+                                    }
+                                ) {
+                                    Text("Удалить")
+                                }
                             }
                         }
                     }

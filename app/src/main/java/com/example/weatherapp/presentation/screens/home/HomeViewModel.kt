@@ -14,7 +14,8 @@ import javax.inject.Inject
 data class HomeUiState(
     val isLoading: Boolean = false,
     val weatherInfo: WeatherInfo? = null,
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val message: String? = null
 )
 
 @HiltViewModel
@@ -25,10 +26,6 @@ class HomeViewModel @Inject constructor(
 
     private val _uiState = MutableLiveData(HomeUiState())
     val uiState: LiveData<HomeUiState> = _uiState
-
-    init {
-        loadWeather("Красноярск")
-    }
 
     fun loadWeather(cityName: String) {
         _uiState.value = HomeUiState(isLoading = true)
@@ -57,7 +54,21 @@ class HomeViewModel @Inject constructor(
         val cityName = uiState.value?.weatherInfo?.cityName ?: return
 
         viewModelScope.launch {
-            addFavoriteCityUseCase(cityName)
+            val isAdded = addFavoriteCityUseCase(cityName)
+
+            _uiState.value = _uiState.value?.copy(
+                message = if (isAdded) {
+                    "Город добавлен в избранное"
+                } else {
+                    "Этот город уже есть в избранном"
+                }
+            )
         }
+    }
+
+    fun clearMessage() {
+        _uiState.value = _uiState.value?.copy(
+            message = null
+        )
     }
 }

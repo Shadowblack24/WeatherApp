@@ -15,7 +15,8 @@ data class SearchUiState(
     val cityQuery: String = "",
     val isLoading: Boolean = false,
     val weatherInfo: WeatherInfo? = null,
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val message: String? = null
 )
 
 @HiltViewModel
@@ -74,7 +75,21 @@ class SearchViewModel @Inject constructor(
         val cityName = _uiState.value?.weatherInfo?.cityName ?: return
 
         viewModelScope.launch {
-            addFavoriteCityUseCase(cityName)
+            val isAdded = addFavoriteCityUseCase(cityName)
+
+            _uiState.value = _uiState.value?.copy(
+                message = if (isAdded) {
+                    "Город добавлен в избранное"
+                } else {
+                    "Этот город уже есть в избранном"
+                }
+            )
         }
+    }
+
+    fun clearMessage() {
+        _uiState.value = _uiState.value?.copy(
+            message = null
+        )
     }
 }

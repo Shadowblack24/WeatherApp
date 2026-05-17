@@ -7,8 +7,7 @@ class AddFavoriteCityUseCase @Inject constructor(
     private val repository: FavoriteRepository
 ) {
 
-    suspend operator fun invoke(cityName: String) {
-
-        repository.addCity(cityName)
+    suspend operator fun invoke(cityName: String): Boolean {
+        return repository.addCity(cityName)
     }
 }
