@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.weatherapp.domain.model.WeatherInfo
+import com.example.weatherapp.domain.usecase.AddFavoriteCityUseCase
 import com.example.weatherapp.domain.usecase.GetWeatherUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -18,7 +19,8 @@ data class HomeUiState(
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val getWeatherUseCase: GetWeatherUseCase
+    private val getWeatherUseCase: GetWeatherUseCase,
+    private val addFavoriteCityUseCase: AddFavoriteCityUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableLiveData(HomeUiState())
@@ -48,6 +50,14 @@ class HomeViewModel @Inject constructor(
                     )
                 }
             )
+        }
+    }
+
+    fun saveCity() {
+        val cityName = uiState.value?.weatherInfo?.cityName ?: return
+
+        viewModelScope.launch {
+            addFavoriteCityUseCase(cityName)
         }
     }
 }

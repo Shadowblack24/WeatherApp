@@ -1,0 +1,10 @@
+package com.example.weatherapp.domain.repository
+
+import com.example.weatherapp.data.local.FavoriteCityEntity
+
+interface FavoriteRepository {
+
+    suspend fun addCity(cityName: String)
+
+    suspend fun getCities(): List<FavoriteCityEntity>
+}

@@ -102,6 +102,16 @@ fun HomeScreen(
                 ) {
                     Text("Обновить")
                 }
+                Text("Ветер: ${weather.windSpeed} км/ч")
+                Spacer(modifier = Modifier.height(24.dp))
+
+                Button(
+                    onClick = {
+                        viewModel.saveCity()
+                    }
+                ) {
+                    Text("Добавить в избранное")
+                }
             }
         }
     }
