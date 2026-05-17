@@ -8,7 +8,7 @@ class GetWeatherUseCase @Inject constructor(
     private val weatherRepository: WeatherRepository
 ) {
 
-    suspend operator fun invoke(): Result<WeatherInfo> {
-        return weatherRepository.getWeather()
+    suspend operator fun invoke(cityName: String): Result<WeatherInfo> {
+        return weatherRepository.getWeather(cityName)
     }
 }

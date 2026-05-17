@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.example.weatherapp.data.local.FavoriteCityDao
 import com.example.weatherapp.data.local.WeatherDatabase
+import com.example.weatherapp.data.remote.GeocodingApi
 import com.example.weatherapp.data.remote.WeatherApi
 import com.example.weatherapp.data.repository.FavoriteRepositoryImpl
 import com.example.weatherapp.data.repository.WeatherRepositoryImpl
@@ -51,10 +52,27 @@ object NetworkModule {
 
     @Provides
     @Singleton
+    fun provideGeocodingApi(
+        okHttpClient: OkHttpClient
+    ): GeocodingApi {
+        return Retrofit.Builder()
+            .baseUrl("https://geocoding-api.open-meteo.com/")
+            .client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(GeocodingApi::class.java)
+    }
+
+    @Provides
+    @Singleton
     fun provideWeatherRepository(
-        weatherApi: WeatherApi
+        weatherApi: WeatherApi,
+        geocodingApi: GeocodingApi
     ): WeatherRepository {
-        return WeatherRepositoryImpl(weatherApi)
+        return WeatherRepositoryImpl(
+            weatherApi = weatherApi,
+            geocodingApi = geocodingApi
+        )
     }
 
     @Provides

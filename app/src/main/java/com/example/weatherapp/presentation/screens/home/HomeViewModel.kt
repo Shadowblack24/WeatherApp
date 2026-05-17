@@ -27,14 +27,14 @@ class HomeViewModel @Inject constructor(
     val uiState: LiveData<HomeUiState> = _uiState
 
     init {
-        loadWeather()
+        loadWeather("Красноярск")
     }
 
-    fun loadWeather() {
+    fun loadWeather(cityName: String) {
         _uiState.value = HomeUiState(isLoading = true)
 
         viewModelScope.launch {
-            val result = getWeatherUseCase()
+            val result = getWeatherUseCase(cityName)
 
             _uiState.value = result.fold(
                 onSuccess = { weather ->

@@ -23,12 +23,16 @@ import androidx.hilt.navigation.compose.hiltViewModel
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
-    val uiState = viewModel.uiState.observeAsState(HomeUiState()).value
+
+    val uiState = viewModel.uiState.observeAsState(
+        HomeUiState()
+    ).value
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(24.dp),
+
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -41,11 +45,14 @@ fun HomeScreen(
         Spacer(modifier = Modifier.height(24.dp))
 
         when {
+
             uiState.isLoading -> {
+
                 CircularProgressIndicator()
             }
 
             uiState.errorMessage != null -> {
+
                 Text(
                     text = uiState.errorMessage,
                     color = MaterialTheme.colorScheme.error
@@ -55,14 +62,16 @@ fun HomeScreen(
 
                 Button(
                     onClick = {
-                        viewModel.loadWeather()
+                        viewModel.loadWeather("Красноярск")
                     }
                 ) {
+
                     Text("Повторить")
                 }
             }
 
             uiState.weatherInfo != null -> {
+
                 val weather = uiState.weatherInfo
 
                 Card(
@@ -70,10 +79,13 @@ fun HomeScreen(
                         defaultElevation = 8.dp
                     )
                 ) {
+
                     Column(
                         modifier = Modifier.padding(24.dp),
+
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
+
                         Text(
                             text = weather.cityName,
                             style = MaterialTheme.typography.headlineMedium
@@ -88,8 +100,24 @@ fun HomeScreen(
 
                         Spacer(modifier = Modifier.height(16.dp))
 
-                        Text("Влажность: ${weather.humidity}%")
-                        Text("Ветер: ${weather.windSpeed} км/ч")
+                        Text(
+                            text = "Влажность: ${weather.humidity}%"
+                        )
+
+                        Text(
+                            text = "Ветер: ${weather.windSpeed} км/ч"
+                        )
+
+                        Spacer(modifier = Modifier.height(24.dp))
+
+                        Button(
+                            onClick = {
+                                viewModel.saveCity()
+                            }
+                        ) {
+
+                            Text("Добавить в избранное")
+                        }
                     }
                 }
 
@@ -97,20 +125,11 @@ fun HomeScreen(
 
                 Button(
                     onClick = {
-                        viewModel.loadWeather()
+                        viewModel.loadWeather("Красноярск")
                     }
                 ) {
+
                     Text("Обновить")
-                }
-                Text("Ветер: ${weather.windSpeed} км/ч")
-                Spacer(modifier = Modifier.height(24.dp))
-
-                Button(
-                    onClick = {
-                        viewModel.saveCity()
-                    }
-                ) {
-                    Text("Добавить в избранное")
                 }
             }
         }

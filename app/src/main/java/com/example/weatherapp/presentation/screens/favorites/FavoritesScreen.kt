@@ -1,56 +1,67 @@
 package com.example.weatherapp.presentation.screens.favorites
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
-fun FavoritesScreen() {
-
-    val cities = remember {
-        mutableStateListOf<String>()
-    }
+fun FavoritesScreen(
+    viewModel: FavoritesViewModel = hiltViewModel()
+) {
+    val uiState = viewModel.uiState.observeAsState(FavoritesUiState()).value
 
     LaunchedEffect(Unit) {
-
-        cities.clear()
-
-        cities.addAll(
-            listOf(
-                "Красноярск"
-            )
-        )
+        viewModel.loadCities()
     }
 
-    LazyColumn(
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
 
-        items(cities) { city ->
+        Text(
+            text = "Избранные города",
+            style = MaterialTheme.typography.headlineLarge
+        )
 
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 12.dp)
+        if (uiState.cities.isEmpty()) {
+            Text(
+                text = "Пока нет избранных городов",
+                modifier = Modifier.padding(top = 24.dp)
+            )
+        } else {
+            LazyColumn(
+                modifier = Modifier.padding(top = 24.dp)
             ) {
+                items(uiState.cities) { city ->
 
-                Column(
-                    modifier = Modifier.padding(16.dp)
-                ) {
-
-                    Text(
-                        text = city,
-                        style = MaterialTheme.typography.headlineSmall
-                    )
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 12.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(16.dp)
+                        ) {
+                            Text(
+                                text = city.cityName,
+                                style = MaterialTheme.typography.headlineSmall
+                            )
+                        }
+                    }
                 }
             }
         }

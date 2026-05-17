@@ -4,5 +4,5 @@ import com.example.weatherapp.domain.model.WeatherInfo
 
 interface WeatherRepository {
 
-    suspend fun getWeather(): Result<WeatherInfo>
+    suspend fun getWeather(cityName: String): Result<WeatherInfo>
 }
