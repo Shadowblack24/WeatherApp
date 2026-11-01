@@ -1,5 +1,6 @@
 package com.example.weatherapp.presentation.screens.search
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -61,10 +62,18 @@ class SearchViewModel @Inject constructor(
                         errorMessage = null
                     )
                 },
-                onFailure = {
+                onFailure = { exception ->
+
+                    Log.e(
+                        "WeatherApp",
+                        "Ошибка получения погоды для города: $query",
+                        exception
+                    )
+
                     _uiState.value?.copy(
                         isLoading = false,
-                        errorMessage = "Город не найден"
+                        errorMessage = exception.message
+                            ?: "Не удалось получить данные о погоде"
                     )
                 }
             )
